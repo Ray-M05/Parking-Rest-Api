@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -8,6 +9,8 @@ import { SpotsModule } from './modules/spots/spots.module';
 import { UsersModule } from './modules/users/users.module';
 import { VehiclesModule } from './modules/vehicles/vehicles.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/infrastructure/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -42,7 +45,9 @@ import { ReservationsModule } from './modules/reservations/reservations.module';
     UsersModule,
     VehiclesModule,
     ReservationsModule,
+    AuthModule,
   ],
   controllers: [HealthController],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}

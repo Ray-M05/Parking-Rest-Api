@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { ReservationRepository } from '../../domain/ports/reservation.repository';
 import { Reservation } from '../../domain/entities/reservation.entity';
 import { ReservationId } from '../../domain/value-objects/reservation-id.vo';
@@ -26,14 +26,13 @@ export class TypeOrmReservationRepository implements ReservationRepository {
   }
 
   async findConfirmedOverlapping(slot: TimeSlot): Promise<Reservation[]> {
-    const list = await this.repo
-      .createQueryBuilder('reservation')
-      .where('reservation.status = :status', {
+    const list = await this.repo.find({
+      where: {
         status: ReservationStatus.Confirmed,
-      })
-      .andWhere('reservation.startTime < :end', { end: slot.end })
-      .andWhere('reservation.endTime > :start', { start: slot.start })
-      .getMany();
+        startTime: LessThan(slot.end),
+        endTime: MoreThan(slot.start),
+      },
+    });
     return list.map((orm) => ReservationMapper.toDomain(orm));
   }
 

@@ -1,17 +1,32 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { UserOrmEntity } from '../../../users/infrastructure/persistence/user.orm-entity';
+import { VehicleOrmEntity } from '../../../vehicles/infrastructure/persistence/vehicle.orm-entity';
+import { ParkingSpotOrmEntity } from '../../../spots/infrastructure/persistence/parking-spot.orm-entity';
 
 @Entity('reservations')
 export class ReservationOrmEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
-  @Column('uuid')
+  @ManyToOne(() => UserOrmEntity)
+  @JoinColumn({ name: 'userId' })
+  user!: UserOrmEntity;
+
+  @Column({ name: 'userId' })
   userId!: string;
 
-  @Column('uuid')
+  @ManyToOne(() => VehicleOrmEntity)
+  @JoinColumn({ name: 'vehicleId' })
+  vehicle!: VehicleOrmEntity;
+
+  @Column({ name: 'vehicleId' })
   vehicleId!: string;
 
-  @Column('uuid')
+  @ManyToOne(() => ParkingSpotOrmEntity)
+  @JoinColumn({ name: 'spotId' })
+  spot!: ParkingSpotOrmEntity;
+
+  @Column({ name: 'spotId' })
   spotId!: string;
 
   @Column({ type: 'timestamptz' })
