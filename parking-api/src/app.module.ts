@@ -4,6 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { envValidationSchema } from './config/env.validation';
 import { HealthController } from './health/health.controller';
+import { SpotsModule } from './modules/spots/spots.module';
+import { UsersModule } from './modules/users/users.module';
+import { VehiclesModule } from './modules/vehicles/vehicles.module';
+import { ReservationsModule } from './modules/reservations/reservations.module';
 
 @Module({
   imports: [
@@ -33,6 +37,11 @@ import { HealthController } from './health/health.controller';
         uri: config.get<string>('MONGO_URI'),
       }),
     }),
+
+    SpotsModule,
+    UsersModule,
+    VehiclesModule,
+    ReservationsModule,
   ],
   controllers: [HealthController],
 })
