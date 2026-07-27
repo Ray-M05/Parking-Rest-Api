@@ -11,9 +11,10 @@ export interface CreateUserProps {
 export class User {
   private constructor(
     readonly id: UserId,
-    readonly email: Email,
+    private _email: Email,
     private passwordHash: string,
     private role: Role,
+    private active: boolean,
   ) {}
 
   static create(props: CreateUserProps): User {
@@ -22,6 +23,7 @@ export class User {
       props.email,
       props.passwordHash,
       props.role,
+      true,
     );
   }
 
@@ -30,8 +32,13 @@ export class User {
     email: Email,
     passwordHash: string,
     role: Role,
+    active: boolean,
   ): User {
-    return new User(id, email, passwordHash, role);
+    return new User(id, email, passwordHash, role, active);
+  }
+
+  get email(): Email {
+    return this._email;
   }
 
   getPasswordHash(): string {
@@ -40,5 +47,29 @@ export class User {
 
   getRole(): Role {
     return this.role;
+  }
+
+  isActive(): boolean {
+    return this.active;
+  }
+
+  deactivate(): void {
+    this.active = false;
+  }
+
+  activate(): void {
+    this.active = true;
+  }
+
+  changeEmail(email: Email): void {
+    this._email = email;
+  }
+
+  changePasswordHash(passwordHash: string): void {
+    this.passwordHash = passwordHash;
+  }
+
+  changeRole(role: Role): void {
+    this.role = role;
   }
 }

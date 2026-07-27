@@ -11,6 +11,7 @@ import { VehiclesModule } from './modules/vehicles/vehicles.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/infrastructure/guards/jwt-auth.guard';
+import { RolesGuard } from './modules/auth/infrastructure/guards/roles.guard';
 
 @Module({
   imports: [
@@ -48,6 +49,9 @@ import { JwtAuthGuard } from './modules/auth/infrastructure/guards/jwt-auth.guar
     AuthModule,
   ],
   controllers: [HealthController],
-  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
+  providers: [
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+  ],
 })
 export class AppModule {}

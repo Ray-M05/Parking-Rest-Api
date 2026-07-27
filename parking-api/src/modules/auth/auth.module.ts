@@ -3,9 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, type JwtSignOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UsersModule } from '../users/users.module';
-import { PASSWORD_HASHER } from './domain/ports/password-hasher.port';
+import { HashingModule } from '../../shared/hashing/hashing.module';
 import { TOKEN_ISSUER } from './domain/ports/token-issuer.port';
-import { BcryptPasswordHasher } from './infrastructure/security/bcrypt-password-hasher';
 import { JwtTokenIssuer } from './infrastructure/security/jwt-token-issuer';
 import { JwtStrategy } from './infrastructure/strategies/jwt.strategy';
 import { RegisterUseCase } from './application/use-cases/register.use-case';
@@ -15,6 +14,7 @@ import { AuthController } from './presentation/auth.controller';
 @Module({
   imports: [
     UsersModule,
+    HashingModule,
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
@@ -34,7 +34,6 @@ import { AuthController } from './presentation/auth.controller';
     RegisterUseCase,
     LoginUseCase,
     JwtStrategy,
-    { provide: PASSWORD_HASHER, useClass: BcryptPasswordHasher },
     { provide: TOKEN_ISSUER, useClass: JwtTokenIssuer },
   ],
 })

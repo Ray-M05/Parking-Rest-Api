@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserRepository } from '../../domain/ports/user.repository';
+import {
+  PaginatedUsers,
+  UserRepository,
+} from '../../domain/ports/user.repository';
 import { User } from '../../domain/entities/user.entity';
 import { UserId } from '../../domain/value-objects/user-id.vo';
 import { Email } from '../../domain/value-objects/email.vo';
@@ -32,6 +35,19 @@ export class TypeOrmUserRepository implements UserRepository {
   async findAll(): Promise<User[]> {
     const list = await this.repo.find();
     return list.map((orm) => UserMapper.toDomain(orm));
+  }
+
+  async findAllPaginated(
+    page: number,
+    limit: number,
+    includeInactive: boolean,
+  ): Promise<PaginatedUsers> {
+    const [list, total] = await this.repo.findAndCount({
+      where: includeInactive ? {} : { active: true },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { data: list.map((orm) => UserMapper.toDomain(orm)), total };
   }
 
   async delete(id: UserId): Promise<void> {

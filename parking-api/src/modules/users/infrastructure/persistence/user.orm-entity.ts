@@ -13,4 +13,7 @@ export class UserOrmEntity {
 
   @Column()
   role!: string;
+
+  @Column({ default: true })
+  active!: boolean;
 }

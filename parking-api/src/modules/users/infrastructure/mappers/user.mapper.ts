@@ -11,6 +11,7 @@ export class UserMapper {
       new Email(orm.email),
       orm.passwordHash,
       orm.role as Role,
+      orm.active,
     );
   }
 
@@ -20,6 +21,7 @@ export class UserMapper {
     orm.email = user.email.value;
     orm.passwordHash = user.getPasswordHash();
     orm.role = user.getRole();
+    orm.active = user.isActive();
     return orm;
   }
 }

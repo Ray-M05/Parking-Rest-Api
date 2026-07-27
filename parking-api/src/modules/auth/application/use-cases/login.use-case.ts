@@ -7,7 +7,7 @@ import { Email } from '../../../users/domain/value-objects/email.vo';
 import {
   PASSWORD_HASHER,
   type PasswordHasher,
-} from '../../domain/ports/password-hasher.port';
+} from '../../../../shared/hashing/domain/ports/password-hasher.port';
 import {
   TOKEN_ISSUER,
   type TokenIssuer,
@@ -40,7 +40,7 @@ export class LoginUseCase {
     }
 
     const user = await this.users.findByEmail(email);
-    if (!user) {
+    if (!user || !user.isActive()) {
       throw new InvalidCredentialsError();
     }
 

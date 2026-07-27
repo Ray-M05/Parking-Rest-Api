@@ -11,7 +11,7 @@ import {
 import {
   PASSWORD_HASHER,
   PasswordHasher,
-} from '../modules/auth/domain/ports/password-hasher.port';
+} from '../shared/hashing/domain/ports/password-hasher.port';
 import { User } from '../modules/users/domain/entities/user.entity';
 import { Email } from '../modules/users/domain/value-objects/email.vo';
 import { Role } from '../modules/users/domain/enums/role.enum';
