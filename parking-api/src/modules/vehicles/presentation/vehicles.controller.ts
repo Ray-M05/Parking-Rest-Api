@@ -11,7 +11,13 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../../auth/presentation/decorators/roles.decorator';
 import { CurrentUser } from '../../auth/presentation/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../../auth/infrastructure/strategies/jwt.strategy';
@@ -42,6 +48,7 @@ export class VehiclesController {
   ) {}
 
   @Roles(Role.Client, Role.Admin)
+  @ApiCreatedResponse({ type: VehicleResponseDto })
   @Post()
   create(
     @Body() dto: CreateVehicleRequestDto,
@@ -56,6 +63,7 @@ export class VehiclesController {
   }
 
   @Roles(Role.Client, Role.Admin)
+  @ApiOkResponse({ type: PaginatedVehiclesResponseDto })
   @Get()
   list(
     @Query() query: ListVehiclesQueryDto,
@@ -70,6 +78,7 @@ export class VehiclesController {
   }
 
   @Roles(Role.Client, Role.Admin)
+  @ApiOkResponse({ type: VehicleResponseDto })
   @Get(':id')
   get(
     @Param('id', ParseUUIDPipe) id: string,
@@ -83,6 +92,7 @@ export class VehiclesController {
   }
 
   @Roles(Role.Client, Role.Admin)
+  @ApiOkResponse({ type: VehicleResponseDto })
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -98,6 +108,7 @@ export class VehiclesController {
   }
 
   @Roles(Role.Client, Role.Admin)
+  @ApiNoContentResponse()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(

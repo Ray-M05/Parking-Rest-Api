@@ -11,7 +11,13 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../../auth/presentation/decorators/roles.decorator';
 import { Role } from '../../users/domain/enums/role.enum';
 import { CreateSpotUseCase } from '../application/use-cases/create-spot.use-case';
@@ -40,22 +46,26 @@ export class SpotsController {
   ) {}
 
   @Roles(Role.Admin)
+  @ApiCreatedResponse({ type: SpotResponseDto })
   @Post()
   create(@Body() dto: CreateSpotRequestDto): Promise<SpotResponseDto> {
     return this.createSpotUseCase.execute(dto);
   }
 
+  @ApiOkResponse({ type: PaginatedSpotsResponseDto })
   @Get()
   list(@Query() query: ListSpotsQueryDto): Promise<PaginatedSpotsResponseDto> {
     return this.listSpotsUseCase.execute(query);
   }
 
+  @ApiOkResponse({ type: SpotResponseDto })
   @Get(':id')
   get(@Param('id', ParseUUIDPipe) id: string): Promise<SpotResponseDto> {
     return this.getSpotUseCase.execute(id);
   }
 
   @Roles(Role.Admin)
+  @ApiOkResponse({ type: SpotResponseDto })
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -65,6 +75,7 @@ export class SpotsController {
   }
 
   @Roles(Role.Admin)
+  @ApiNoContentResponse()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

@@ -10,6 +10,7 @@ import { ListUsersUseCase } from './application/use-cases/list-users.use-case';
 import { GetUserUseCase } from './application/use-cases/get-user.use-case';
 import { UpdateUserUseCase } from './application/use-cases/update-user.use-case';
 import { ChangeUserRoleUseCase } from './application/use-cases/change-user-role.use-case';
+import { ChangeUserStatusUseCase } from './application/use-cases/change-user-status.use-case';
 import { DeleteUserUseCase } from './application/use-cases/delete-user.use-case';
 
 @Module({
@@ -25,6 +26,7 @@ import { DeleteUserUseCase } from './application/use-cases/delete-user.use-case'
     GetUserUseCase,
     UpdateUserUseCase,
     ChangeUserRoleUseCase,
+    ChangeUserStatusUseCase,
     DeleteUserUseCase,
   ],
   exports: [USER_REPOSITORY],

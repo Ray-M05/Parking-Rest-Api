@@ -23,7 +23,7 @@ async function bootstrap() {
     .setDescription('API RESTful para gestión de parking (Clean Architecture)')
     .setVersion('1.0')
     .addBearerAuth()
-    .addTag('health')
+    .addTag('Health')
     .addTag('auth')
     .addTag('users')
     .addTag('vehicles')

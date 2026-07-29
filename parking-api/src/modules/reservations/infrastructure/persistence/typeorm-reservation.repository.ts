@@ -8,12 +8,14 @@ import {
   Repository,
 } from 'typeorm';
 import {
+  PaginatedReservations,
   ReservationRepository,
   ReserveSpotParams,
 } from '../../domain/ports/reservation.repository';
 import { Reservation } from '../../domain/entities/reservation.entity';
 import { ReservationId } from '../../domain/value-objects/reservation-id.vo';
 import { TimeSlot } from '../../domain/value-objects/time-slot.vo';
+import { UserId } from '../../../users/domain/value-objects/user-id.vo';
 import { ReservationStatus } from '../../domain/enums/reservation-status.enum';
 import { SpotNotAvailableError } from '../../domain/errors/spot-not-available.error';
 import { VehicleAlreadyReservedError } from '../../domain/errors/vehicle-already-reserved.error';
@@ -133,6 +135,20 @@ export class TypeOrmReservationRepository implements ReservationRepository {
   async findAll(): Promise<Reservation[]> {
     const list = await this.repo.find();
     return list.map((orm) => ReservationMapper.toDomain(orm));
+  }
+
+  async findPaginated(
+    page: number,
+    limit: number,
+    userId?: UserId,
+  ): Promise<PaginatedReservations> {
+    const [list, total] = await this.repo.findAndCount({
+      where: userId ? { userId: userId.value } : {},
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { startTime: 'DESC' },
+    });
+    return { data: list.map((orm) => ReservationMapper.toDomain(orm)), total };
   }
 
   async delete(id: ReservationId): Promise<void> {

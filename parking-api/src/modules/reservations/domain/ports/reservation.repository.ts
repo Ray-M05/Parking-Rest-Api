@@ -10,6 +10,11 @@ export interface ReserveSpotParams {
   slot: TimeSlot;
 }
 
+export interface PaginatedReservations {
+  data: Reservation[];
+  total: number;
+}
+
 export interface ReservationRepository {
   save(reservation: Reservation): Promise<void>;
   findById(id: ReservationId): Promise<Reservation | null>;
@@ -17,6 +22,11 @@ export interface ReservationRepository {
   findConfirmedActiveAt(instant: Date): Promise<Reservation[]>;
   reserveSpot(params: ReserveSpotParams): Promise<Reservation>;
   findAll(): Promise<Reservation[]>;
+  findPaginated(
+    page: number,
+    limit: number,
+    userId?: UserId,
+  ): Promise<PaginatedReservations>;
   delete(id: ReservationId): Promise<void>;
 }
 

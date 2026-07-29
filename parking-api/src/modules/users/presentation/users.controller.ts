@@ -13,7 +13,13 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../../auth/presentation/decorators/roles.decorator';
 import { CurrentUser } from '../../auth/presentation/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../../auth/infrastructure/strategies/jwt.strategy';
@@ -23,10 +29,12 @@ import { ListUsersUseCase } from '../application/use-cases/list-users.use-case';
 import { GetUserUseCase } from '../application/use-cases/get-user.use-case';
 import { UpdateUserUseCase } from '../application/use-cases/update-user.use-case';
 import { ChangeUserRoleUseCase } from '../application/use-cases/change-user-role.use-case';
+import { ChangeUserStatusUseCase } from '../application/use-cases/change-user-status.use-case';
 import { DeleteUserUseCase } from '../application/use-cases/delete-user.use-case';
 import { CreateUserRequestDto } from './dtos/create-user-request.dto';
 import { UpdateUserRequestDto } from './dtos/update-user-request.dto';
 import { ChangeRoleRequestDto } from './dtos/change-role-request.dto';
+import { ChangeStatusRequestDto } from './dtos/change-status-request.dto';
 import { ListUsersQueryDto } from './dtos/list-users-query.dto';
 import {
   PaginatedUsersResponseDto,
@@ -43,27 +51,32 @@ export class UsersController {
     private readonly getUserUseCase: GetUserUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly changeUserRoleUseCase: ChangeUserRoleUseCase,
+    private readonly changeUserStatusUseCase: ChangeUserStatusUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
   ) {}
 
   @Roles(Role.Admin)
+  @ApiCreatedResponse({ type: UserResponseDto })
   @Post()
   create(@Body() dto: CreateUserRequestDto): Promise<UserResponseDto> {
     return this.createUserUseCase.execute(dto);
   }
 
   @Roles(Role.Admin)
+  @ApiOkResponse({ type: PaginatedUsersResponseDto })
   @Get()
   list(@Query() query: ListUsersQueryDto): Promise<PaginatedUsersResponseDto> {
     return this.listUsersUseCase.execute(query);
   }
 
   @Roles(Role.Admin)
+  @ApiOkResponse({ type: UserResponseDto })
   @Get(':id')
   get(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponseDto> {
     return this.getUserUseCase.execute(id);
   }
 
+  @ApiOkResponse({ type: UserResponseDto })
   @Put(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -79,6 +92,7 @@ export class UsersController {
   }
 
   @Roles(Role.Admin)
+  @ApiOkResponse({ type: UserResponseDto })
   @Patch(':id/role')
   changeRole(
     @Param('id', ParseUUIDPipe) id: string,
@@ -88,6 +102,17 @@ export class UsersController {
   }
 
   @Roles(Role.Admin)
+  @ApiOkResponse({ type: UserResponseDto })
+  @Patch(':id/status')
+  changeStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ChangeStatusRequestDto,
+  ): Promise<UserResponseDto> {
+    return this.changeUserStatusUseCase.execute({ id, active: dto.active });
+  }
+
+  @Roles(Role.Admin)
+  @ApiNoContentResponse()
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {

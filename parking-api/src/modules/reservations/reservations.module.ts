@@ -8,6 +8,10 @@ import { VehiclesModule } from '../vehicles/vehicles.module';
 import { ReserveSpotUseCase } from './application/use-cases/reserve-spot.use-case';
 import { GetOccupancyUseCase } from './application/use-cases/get-occupancy.use-case';
 import { ListAvailableSpotsUseCase } from './application/use-cases/list-available-spots.use-case';
+import { ListReservationsUseCase } from './application/use-cases/list-reservations.use-case';
+import { GetReservationUseCase } from './application/use-cases/get-reservation.use-case';
+import { CancelReservationUseCase } from './application/use-cases/cancel-reservation.use-case';
+import { DeleteReservationUseCase } from './application/use-cases/delete-reservation.use-case';
 import { ReservationsController } from './presentation/reservations.controller';
 import { ParkingController } from './presentation/parking.controller';
 
@@ -26,6 +30,10 @@ import { ParkingController } from './presentation/parking.controller';
     ReserveSpotUseCase,
     GetOccupancyUseCase,
     ListAvailableSpotsUseCase,
+    ListReservationsUseCase,
+    GetReservationUseCase,
+    CancelReservationUseCase,
+    DeleteReservationUseCase,
   ],
   exports: [RESERVATION_REPOSITORY],
 })

@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../auth/presentation/decorators/roles.decorator';
 import { Role } from '../../users/domain/enums/role.enum';
 import { GetOccupancyUseCase } from '../application/use-cases/get-occupancy.use-case';
@@ -19,12 +19,14 @@ export class ParkingController {
   ) {}
 
   @Roles(Role.Employee, Role.Admin)
+  @ApiOkResponse({ type: OccupancyResponseDto })
   @Get('occupancy')
   occupancy(@Query() query: OccupancyQueryDto): Promise<OccupancyResponseDto> {
     return this.getOccupancyUseCase.execute(query);
   }
 
   @Roles(Role.Client, Role.Admin)
+  @ApiOkResponse({ type: AvailableSpotResponseDto, isArray: true })
   @Get('spots/available')
   available(
     @Query() query: AvailableSpotsQueryDto,

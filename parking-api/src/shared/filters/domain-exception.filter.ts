@@ -26,6 +26,9 @@ import { SpotCodeAlreadyInUseError } from '../../modules/spots/domain/errors/spo
 import { InvalidSpotIdError } from '../../modules/spots/domain/errors/invalid-spot-id.error';
 import { InvalidParkingSpotCodeError } from '../../modules/spots/domain/errors/invalid-parking-spot-code.error';
 import { InvalidReservationIdError } from '../../modules/reservations/domain/errors/invalid-reservation-id.error';
+import { ReservationNotFoundError } from '../../modules/reservations/domain/errors/reservation-not-found.error';
+import { ReservationNotOwnedError } from '../../modules/reservations/domain/errors/reservation-not-owned.error';
+import { ReservationAlreadyCancelledError } from '../../modules/reservations/domain/errors/reservation-already-cancelled.error';
 
 type ErrorConstructor = new (...args: never[]) => Error;
 
@@ -50,6 +53,9 @@ const DOMAIN_ERROR_STATUS = new Map<ErrorConstructor, HttpStatus>([
   [InvalidSpotIdError, HttpStatus.BAD_REQUEST],
   [InvalidParkingSpotCodeError, HttpStatus.BAD_REQUEST],
   [InvalidReservationIdError, HttpStatus.BAD_REQUEST],
+  [ReservationNotFoundError, HttpStatus.NOT_FOUND],
+  [ReservationNotOwnedError, HttpStatus.FORBIDDEN],
+  [ReservationAlreadyCancelledError, HttpStatus.CONFLICT],
 ]);
 
 @Catch()
