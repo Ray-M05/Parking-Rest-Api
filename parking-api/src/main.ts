@@ -23,6 +23,13 @@ async function bootstrap() {
     .setDescription('API RESTful para gestión de parking (Clean Architecture)')
     .setVersion('1.0')
     .addBearerAuth()
+    .addTag('health')
+    .addTag('auth')
+    .addTag('users')
+    .addTag('vehicles')
+    .addTag('spots')
+    .addTag('reservations')
+    .addTag('parking')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

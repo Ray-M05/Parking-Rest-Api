@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { VehicleRepository } from '../../domain/ports/vehicle.repository';
+import { QueryFailedError, Repository } from 'typeorm';
+import {
+  PaginatedVehicles,
+  VehicleRepository,
+} from '../../domain/ports/vehicle.repository';
 import { Vehicle } from '../../domain/entities/vehicle.entity';
 import { VehicleId } from '../../domain/value-objects/vehicle-id.vo';
 import { Plate } from '../../domain/value-objects/plate.vo';
 import { UserId } from '../../../users/domain/value-objects/user-id.vo';
+import { VehicleInUseError } from '../../domain/errors/vehicle-in-use.error';
 import { VehicleOrmEntity } from './vehicle.orm-entity';
 import { VehicleMapper } from '../mappers/vehicle.mapper';
+
+const FOREIGN_KEY_VIOLATION = '23503';
 
 @Injectable()
 export class TypeOrmVehicleRepository implements VehicleRepository {
@@ -40,7 +46,30 @@ export class TypeOrmVehicleRepository implements VehicleRepository {
     return list.map((orm) => VehicleMapper.toDomain(orm));
   }
 
+  async findPaginated(
+    page: number,
+    limit: number,
+    ownerId?: UserId,
+  ): Promise<PaginatedVehicles> {
+    const [list, total] = await this.repo.findAndCount({
+      where: ownerId ? { ownerId: ownerId.value } : {},
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { data: list.map((orm) => VehicleMapper.toDomain(orm)), total };
+  }
+
   async delete(id: VehicleId): Promise<void> {
-    await this.repo.delete({ id: id.value });
+    try {
+      await this.repo.delete({ id: id.value });
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error as unknown as { code?: string }).code === FOREIGN_KEY_VIOLATION
+      ) {
+        throw new VehicleInUseError(id.value);
+      }
+      throw error;
+    }
   }
 }

@@ -4,20 +4,32 @@ import { InvalidParkingSpotCodeError } from '../errors/invalid-parking-spot-code
 export class ParkingSpot {
   private constructor(
     readonly id: SpotId,
-    readonly code: string,
+    private _code: string,
     private active: boolean,
   ) {}
 
   static create(code: string): ParkingSpot {
-    const trimmed = code.trim();
-    if (trimmed.length === 0) {
-      throw new InvalidParkingSpotCodeError(code);
-    }
-    return new ParkingSpot(SpotId.create(), trimmed.toUpperCase(), true);
+    return new ParkingSpot(SpotId.create(), ParkingSpot.normalize(code), true);
   }
 
   static reconstitute(id: SpotId, code: string, active: boolean): ParkingSpot {
     return new ParkingSpot(id, code, active);
+  }
+
+  private static normalize(code: string): string {
+    const trimmed = code.trim();
+    if (trimmed.length === 0) {
+      throw new InvalidParkingSpotCodeError(code);
+    }
+    return trimmed.toUpperCase();
+  }
+
+  get code(): string {
+    return this._code;
+  }
+
+  changeCode(code: string): void {
+    this._code = ParkingSpot.normalize(code);
   }
 
   isActive(): boolean {

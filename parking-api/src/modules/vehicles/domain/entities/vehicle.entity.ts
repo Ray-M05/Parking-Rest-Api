@@ -6,7 +6,7 @@ export class Vehicle {
   private constructor(
     readonly id: VehicleId,
     readonly ownerId: UserId,
-    readonly plate: Plate,
+    private _plate: Plate,
   ) {}
 
   static create(ownerId: UserId, plate: Plate): Vehicle {
@@ -15,6 +15,14 @@ export class Vehicle {
 
   static reconstitute(id: VehicleId, ownerId: UserId, plate: Plate): Vehicle {
     return new Vehicle(id, ownerId, plate);
+  }
+
+  get plate(): Plate {
+    return this._plate;
+  }
+
+  changePlate(plate: Plate): void {
+    this._plate = plate;
   }
 
   belongsTo(userId: UserId): boolean {

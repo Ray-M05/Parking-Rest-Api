@@ -24,7 +24,7 @@ export class ParkingController {
     return this.getOccupancyUseCase.execute(query);
   }
 
-  @Roles(Role.Client, Role.Employee, Role.Admin)
+  @Roles(Role.Client, Role.Admin)
   @Get('spots/available')
   available(
     @Query() query: AvailableSpotsQueryDto,

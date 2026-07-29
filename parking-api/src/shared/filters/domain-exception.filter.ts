@@ -17,6 +17,15 @@ import { InvalidTimeSlotError } from '../../modules/reservations/domain/errors/i
 import { PastTimeSlotError } from '../../modules/reservations/domain/errors/past-time-slot.error';
 import { VehicleNotFoundError } from '../../modules/vehicles/domain/errors/vehicle-not-found.error';
 import { VehicleNotOwnedError } from '../../modules/vehicles/domain/errors/vehicle-not-owned.error';
+import { PlateAlreadyInUseError } from '../../modules/vehicles/domain/errors/plate-already-in-use.error';
+import { VehicleInUseError } from '../../modules/vehicles/domain/errors/vehicle-in-use.error';
+import { InvalidVehicleIdError } from '../../modules/vehicles/domain/errors/invalid-vehicle-id.error';
+import { InvalidPlateError } from '../../modules/vehicles/domain/errors/invalid-plate.error';
+import { SpotNotFoundError } from '../../modules/spots/domain/errors/spot-not-found.error';
+import { SpotCodeAlreadyInUseError } from '../../modules/spots/domain/errors/spot-code-already-in-use.error';
+import { InvalidSpotIdError } from '../../modules/spots/domain/errors/invalid-spot-id.error';
+import { InvalidParkingSpotCodeError } from '../../modules/spots/domain/errors/invalid-parking-spot-code.error';
+import { InvalidReservationIdError } from '../../modules/reservations/domain/errors/invalid-reservation-id.error';
 
 type ErrorConstructor = new (...args: never[]) => Error;
 
@@ -32,6 +41,15 @@ const DOMAIN_ERROR_STATUS = new Map<ErrorConstructor, HttpStatus>([
   [PastTimeSlotError, HttpStatus.BAD_REQUEST],
   [VehicleNotFoundError, HttpStatus.NOT_FOUND],
   [VehicleNotOwnedError, HttpStatus.FORBIDDEN],
+  [PlateAlreadyInUseError, HttpStatus.CONFLICT],
+  [VehicleInUseError, HttpStatus.CONFLICT],
+  [InvalidVehicleIdError, HttpStatus.BAD_REQUEST],
+  [InvalidPlateError, HttpStatus.BAD_REQUEST],
+  [SpotNotFoundError, HttpStatus.NOT_FOUND],
+  [SpotCodeAlreadyInUseError, HttpStatus.CONFLICT],
+  [InvalidSpotIdError, HttpStatus.BAD_REQUEST],
+  [InvalidParkingSpotCodeError, HttpStatus.BAD_REQUEST],
+  [InvalidReservationIdError, HttpStatus.BAD_REQUEST],
 ]);
 
 @Catch()
