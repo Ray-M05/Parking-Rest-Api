@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { envValidationSchema } from './config/env.validation';
 import { HealthController } from './health/health.controller';
 import { SpotsModule } from './modules/spots/spots.module';
@@ -41,6 +42,8 @@ import { RolesGuard } from './modules/auth/infrastructure/guards/roles.guard';
         uri: config.get<string>('MONGO_URI'),
       }),
     }),
+
+    EventEmitterModule.forRoot(),
 
     SpotsModule,
     UsersModule,
