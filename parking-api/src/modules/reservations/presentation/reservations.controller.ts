@@ -72,6 +72,11 @@ export class ReservationsController {
       requesterRole: user.role,
       page: query.page,
       limit: query.limit,
+      userId: query.userId,
+      vehicleId: query.vehicleId,
+      spotId: query.spotId,
+      status: query.status,
+      at: query.at,
     });
   }
 

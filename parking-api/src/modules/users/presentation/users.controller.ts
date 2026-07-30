@@ -88,7 +88,11 @@ export class UsersController {
     if (!isOwner && !isAdmin) {
       throw new ForbiddenException('Solo puedes editar tu propio usuario');
     }
-    return this.updateUserUseCase.execute({ id, ...dto });
+    return this.updateUserUseCase.execute({
+      id,
+      actorId: currentUser.userId,
+      ...dto,
+    });
   }
 
   @Roles(Role.Admin)

@@ -30,6 +30,7 @@ async function bootstrap() {
     .addTag('spots')
     .addTag('reservations')
     .addTag('parking')
+    .addTag('logs')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

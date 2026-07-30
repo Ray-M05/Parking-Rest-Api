@@ -1,8 +1,10 @@
 import { Reservation } from '../entities/reservation.entity';
 import { ReservationId } from '../value-objects/reservation-id.vo';
 import { TimeSlot } from '../value-objects/time-slot.vo';
+import { ReservationStatus } from '../enums/reservation-status.enum';
 import { UserId } from '../../../users/domain/value-objects/user-id.vo';
 import { VehicleId } from '../../../vehicles/domain/value-objects/vehicle-id.vo';
+import { SpotId } from '../../../spots/domain/value-objects/spot-id.vo';
 
 export interface ReserveSpotParams {
   userId: UserId;
@@ -15,6 +17,14 @@ export interface PaginatedReservations {
   total: number;
 }
 
+export interface ReservationFilters {
+  userId?: UserId;
+  vehicleId?: VehicleId;
+  spotId?: SpotId;
+  status?: ReservationStatus;
+  at?: Date;
+}
+
 export interface ReservationRepository {
   save(reservation: Reservation): Promise<void>;
   findById(id: ReservationId): Promise<Reservation | null>;
@@ -25,7 +35,7 @@ export interface ReservationRepository {
   findPaginated(
     page: number,
     limit: number,
-    userId?: UserId,
+    filters?: ReservationFilters,
   ): Promise<PaginatedReservations>;
   delete(id: ReservationId): Promise<void>;
 }

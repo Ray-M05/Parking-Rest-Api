@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import {
   USER_REPOSITORY,
   type UserRepository,
@@ -11,9 +12,11 @@ import {
   PASSWORD_HASHER,
   type PasswordHasher,
 } from '../../../../shared/hashing/domain/ports/password-hasher.port';
+import { UserUpdatedEvent } from '../../domain/events/user-updated.event';
 
 export interface UpdateUserInput {
   id: string;
+  actorId: string;
   email?: string;
   password?: string;
 }
@@ -30,6 +33,7 @@ export class UpdateUserUseCase {
   constructor(
     @Inject(USER_REPOSITORY) private readonly users: UserRepository,
     @Inject(PASSWORD_HASHER) private readonly hasher: PasswordHasher,
+    private readonly events: EventEmitter2,
   ) {}
 
   async execute(input: UpdateUserInput): Promise<UpdateUserOutput> {
@@ -39,6 +43,8 @@ export class UpdateUserUseCase {
       throw new UserNotFoundError(input.id);
     }
 
+    const changedFields: string[] = [];
+
     if (input.email) {
       const newEmail = new Email(input.email);
       if (!newEmail.equals(user.email)) {
@@ -47,15 +53,24 @@ export class UpdateUserUseCase {
           throw new EmailAlreadyInUseError(newEmail.value);
         }
         user.changeEmail(newEmail);
+        changedFields.push('email');
       }
     }
 
     if (input.password) {
       const passwordHash = await this.hasher.hash(input.password);
       user.changePasswordHash(passwordHash);
+      changedFields.push('password');
     }
 
     await this.users.save(user);
+
+    if (changedFields.length > 0) {
+      this.events.emit(
+        UserUpdatedEvent.NAME,
+        new UserUpdatedEvent(input.actorId, user.id.value, changedFields),
+      );
+    }
 
     return {
       id: user.id.value,

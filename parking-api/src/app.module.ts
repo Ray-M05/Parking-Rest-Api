@@ -10,6 +10,7 @@ import { SpotsModule } from './modules/spots/spots.module';
 import { UsersModule } from './modules/users/users.module';
 import { VehiclesModule } from './modules/vehicles/vehicles.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
+import { LogsModule } from './modules/logs/logs.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/infrastructure/guards/jwt-auth.guard';
 import { RolesGuard } from './modules/auth/infrastructure/guards/roles.guard';
@@ -49,6 +50,7 @@ import { RolesGuard } from './modules/auth/infrastructure/guards/roles.guard';
     UsersModule,
     VehiclesModule,
     ReservationsModule,
+    LogsModule,
     AuthModule,
   ],
   controllers: [HealthController],

@@ -9,13 +9,13 @@ import {
 } from 'typeorm';
 import {
   PaginatedReservations,
+  ReservationFilters,
   ReservationRepository,
   ReserveSpotParams,
 } from '../../domain/ports/reservation.repository';
 import { Reservation } from '../../domain/entities/reservation.entity';
 import { ReservationId } from '../../domain/value-objects/reservation-id.vo';
 import { TimeSlot } from '../../domain/value-objects/time-slot.vo';
-import { UserId } from '../../../users/domain/value-objects/user-id.vo';
 import { ReservationStatus } from '../../domain/enums/reservation-status.enum';
 import { SpotNotAvailableError } from '../../domain/errors/spot-not-available.error';
 import { VehicleAlreadyReservedError } from '../../domain/errors/vehicle-already-reserved.error';
@@ -140,10 +140,20 @@ export class TypeOrmReservationRepository implements ReservationRepository {
   async findPaginated(
     page: number,
     limit: number,
-    userId?: UserId,
+    filters?: ReservationFilters,
   ): Promise<PaginatedReservations> {
+    const where: Record<string, unknown> = {};
+    if (filters?.userId) where.userId = filters.userId.value;
+    if (filters?.vehicleId) where.vehicleId = filters.vehicleId.value;
+    if (filters?.spotId) where.spotId = filters.spotId.value;
+    if (filters?.status) where.status = filters.status;
+    if (filters?.at) {
+      where.startTime = LessThanOrEqual(filters.at);
+      where.endTime = MoreThanOrEqual(filters.at);
+    }
+
     const [list, total] = await this.repo.findAndCount({
-      where: userId ? { userId: userId.value } : {},
+      where,
       skip: (page - 1) * limit,
       take: limit,
       order: { startTime: 'DESC' },
